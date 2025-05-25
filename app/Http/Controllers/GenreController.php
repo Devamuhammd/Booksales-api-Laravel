@@ -3,51 +3,119 @@
 namespace App\Http\Controllers;
 
 use App\Models\Genre;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\GenreRequest;
+use Illuminate\Http\Request;
 
 class GenreController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $genres = Genre::all();
-
-        if (!$genres) {
+        try {
+            $genres = Genre::all();
+            
             return response()->json([
-            "success" => true,
-            "message" => "resource data not found!",
-            "data" => null
-        ], 200);
+                'success' => true,
+                'message' => 'Data genre berhasil diambil',
+                'data' => $genres
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengambil data genre',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        return response()->json([
-            "success" => true,
-            "message" => "Get all resources",
-            "data" => $genres
-        ], 200);
     }
 
-    public function store($request) {
-        //1. Validasi
-        $validator = Validator::make(request()->all(), [
-            "name" => "required|string",
-            "description" => "required|string"
-        ]);
-        //2. cek data yang eror
-        if ($validator->fails()) {
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(GenreRequest $request)
+    {
+        try {
+            $genre = Genre::create($request->validated());
+            
             return response()->json([
-                "success" => false,
-                "message" => $validator->errors()
-             ], 422);
+                'success' => true,
+                'message' => 'Genre berhasil dibuat',
+                'data' => $genre
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat genre',
+                'error' => $e->getMessage()
+            ], 500);
         }
-        //3. simpan data
-        $genre = Genre::create([
-            "name" => $request->name,
-            "description" => $request->description
-        ]);
-        //4. response berhasil
-        return response()->json([
-            "success" => true,
-            "message" => "resource created seccessfully",
-            "data" => $genre
-        ], 201);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        try {
+            $genre = Genre::findOrFail($id);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Data genre berhasil diambil',
+                'data' => $genre
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Genre tidak ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(GenreRequest $request, $id)
+    {
+        try {
+            $genre = Genre::findOrFail($id);
+            $genre->update($request->validated());
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Genre berhasil diupdate',
+                'data' => $genre
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate genre',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $genre = Genre::findOrFail($id);
+            $genre->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Genre berhasil dihapus'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus genre',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
