@@ -15,7 +15,7 @@ class AuthorController extends Controller
     {
         try {
             $authors = Author::all();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data author berhasil diambil',
@@ -37,7 +37,7 @@ class AuthorController extends Controller
     {
         try {
             $author = Author::create($request->validated());
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Author berhasil dibuat',
@@ -59,7 +59,7 @@ class AuthorController extends Controller
     {
         try {
             $author = Author::findOrFail($id);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Data author berhasil diambil',
@@ -82,7 +82,7 @@ class AuthorController extends Controller
         try {
             $author = Author::findOrFail($id);
             $author->update($request->validated());
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Author berhasil diupdate',
@@ -105,7 +105,7 @@ class AuthorController extends Controller
         try {
             $author = Author::findOrFail($id);
             $author->delete();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Author berhasil dihapus'
